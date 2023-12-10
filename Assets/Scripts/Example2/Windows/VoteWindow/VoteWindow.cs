@@ -6,6 +6,7 @@ using Firebase.Database;
 using Firebase.Extensions;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 namespace igrohub.Example2.Windows
 {
@@ -16,7 +17,8 @@ namespace igrohub.Example2.Windows
     [SerializeField] private TMP_Text _currentUserName;
     [SerializeField] private Button _exit;
     [SerializeField] private Transform _sectionsHolder;
-    [SerializeField] private VoteSection _sectionPrefab;
+    [FormerlySerializedAs("_sectionPrefab")]
+    [SerializeField] private VoteSectionView _sectionViewPrefab;
 
     private FirebaseUser _user;
     private DatabaseReference _databaseReference;
@@ -30,9 +32,9 @@ namespace igrohub.Example2.Windows
       
       foreach (string sectionName in _sectionsNames)
       {
-        _sections[sectionName] = Instantiate(_sectionPrefab, _sectionsHolder);
-        _sections[sectionName].Init(sectionName, Vote);
-        _databaseReference.Child(sectionName).ChildAdded += (_, args) => UpdateData(sectionName, args.Snapshot);
+        var view = Instantiate(_sectionViewPrefab, _sectionsHolder);
+        _sections[sectionName] = new VoteSection(sectionName, view, _databaseReference);
+        _sections[sectionName].Vote += MarkAllVoted;
       }
     }
     
@@ -40,40 +42,32 @@ namespace igrohub.Example2.Windows
     {
       _user = FirebaseAuth.DefaultInstance.CurrentUser;
       _currentUserName.text = string.IsNullOrEmpty(_user.DisplayName) ? _user.Email : _user.DisplayName;
-      UpdateAllData();
+      RefreshVoteState();
     }
 
-    private void UpdateAllData()
+    private void RefreshVoteState()
     {
       _databaseReference.GetValueAsync().ContinueWithOnMainThread(
       task => {
         var data = task.Result;
-
         _voted = data.Children.Any(c => c.HasChild(_user.UserId));
-        
-        foreach (var section in _sections.Keys)
-        {
-          var sectionSnapShot = data.Child(section);
-          UpdateData(section, sectionSnapShot);
-        }
+        MarkAllVoted(_voted);
       });
     }
 
-    private void UpdateData(string section, DataSnapshot snapShot)
+    private void MarkAllVoted() => MarkAllVoted(true);
+    private void MarkAllVoted(bool value)
     {
-      _sections[section].UpdateData(_voted, snapShot.ChildrenCount);
+      foreach (KeyValuePair<string, VoteSection> section in _sections)
+      {
+        section.Value.MarkVoted(value);
+      }
     }
-
+    
     private static void Exit()
     {
       FirebaseAuth.DefaultInstance.SignOut();
       WindowsController.Show<EntryWindow>();
-    }
-
-    private void Vote(string section)
-    {
-      _voted = true;
-      _databaseReference.Child(section).Child(_user.UserId).SetValueAsync("").ContinueWithOnMainThread(_ => UpdateAllData());
     }
   }
 }

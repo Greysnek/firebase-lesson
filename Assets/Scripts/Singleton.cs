@@ -2,8 +2,6 @@
 
 namespace igrohub
 {
-  //todo Singleton is not best option for educational code
-  //For future: DO NOT DO ANYTHING AT NIGHT!!!
   public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
   {
     private static T _instance = null;
