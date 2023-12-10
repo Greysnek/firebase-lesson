@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Firebase.Auth;
 using Firebase.Extensions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
 namespace igrohub.Example2.Windows
 {
   public class SignInWindow : WindowBehaviour
@@ -30,7 +30,7 @@ namespace igrohub.Example2.Windows
       if(_activeTask != null && _activeTask.Status == TaskStatus.Running)
         return;
       
-      _activeTask = FirebaseAuth.DefaultInstance.SignInWithEmailAndPasswordAsync(_emailInput.text, _passwordInput.text);
+      _activeTask = SignIn();
       _activeTask.ContinueWithOnMainThread(
       task => 
       {
@@ -46,6 +46,11 @@ namespace igrohub.Example2.Windows
         
         WindowsController.Show<VoteWindow>();
       });
+    }
+
+    private async Task SignIn()
+    {
+      await FirebaseAuth.DefaultInstance.SignInWithEmailAndPasswordAsync(_emailInput.text, _passwordInput.text);
     }
   }
 }
