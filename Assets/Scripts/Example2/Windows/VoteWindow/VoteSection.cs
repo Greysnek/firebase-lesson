@@ -1,36 +1,48 @@
 ﻿using System;
-using TMPro;
-using UnityEngine;
-using UnityEngine.UI;
+using Firebase.Auth;
+using Firebase.Database;
+using Firebase.Extensions;
 namespace igrohub.Example2.Windows
 {
-  public class VoteSection : MonoBehaviour
+  public class VoteSection
   {
-    [SerializeField] private Button _voteButton;
-    [SerializeField] private TMP_Text _header;
-    [SerializeField] private TMP_Text _output;
-
-    private string _name;
-    private Action<string> _onVote; 
-      
-    public void Init(string sectionName, Action<string> onVote)
+    public event Action Vote;
+    
+    private readonly VoteSectionView _view;
+    private readonly DatabaseReference _databaseReference;
+    
+    public VoteSection(string name, VoteSectionView view, DatabaseReference databaseRoot)
     {
-      _onVote = onVote;
-      _voteButton.onClick.AddListener(OnButtonClick);
-      _name = sectionName;
-      _header.text = sectionName;
+      _view = view;
+      _databaseReference = databaseRoot.Child(name);
+      _view.Init(name, OnVote);
+
+      _databaseReference.ChildAdded += OnChildAdded;
     }
 
-    public void UpdateData(bool voted, long voteCount)
+    public void Refresh()
     {
-      _output.text = voteCount.ToString();
-      _voteButton.gameObject.SetActive(!voted);
-      _output.gameObject.SetActive(voted);
+      _databaseReference.GetValueAsync().ContinueWithOnMainThread(
+      task => {
+        _view.UpdateData(task.Result.ChildrenCount);
+      });
     }
 
-    private void OnButtonClick()
+    public void MarkVoted(bool voted = true)
     {
-      _onVote?.Invoke(_name);
+      _view.MarkVoted(voted);
+    }
+
+    private void OnChildAdded(object sender, ChildChangedEventArgs args)
+    {
+      Refresh();
+    }
+
+    private void OnVote()
+    {
+      var user = FirebaseAuth.DefaultInstance.CurrentUser;
+      _databaseReference.Child(user.UserId).SetValueAsync("");
+      Vote?.Invoke();
     }
   }
 }
