@@ -27,6 +27,14 @@ namespace igrohub.Example2.Windows
       _applyButton.onClick.AddListener(OnApply);
     }
 
+    protected override void OnShow()
+    {
+      _nameInput.text = "";
+      _emailInput.text = "";
+      _passwordInput.text = "";
+      _errorMessage.text = "";
+    }
+
     private void OnApply()
     {
       if(_activeTask != null && _activeTask.Status == TaskStatus.Running)

@@ -4,7 +4,7 @@ namespace igrohub
 {
   public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
   {
-    private static T _instance = null;
+    private static T _instance;
 
     public static T Instance
     {
@@ -15,15 +15,7 @@ namespace igrohub
 
         var fundedInstance = (T)FindObjectOfType(typeof(T));
 
-        if (fundedInstance)
-        {
-          _instance = fundedInstance;
-          DontDestroyOnLoad(_instance.gameObject);
-        }
-        else
-        {
-          _instance = null;
-        }
+        _instance = fundedInstance ? fundedInstance : null;
 
         return _instance;
       }

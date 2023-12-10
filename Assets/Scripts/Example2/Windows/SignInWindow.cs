@@ -24,6 +24,13 @@ namespace igrohub.Example2.Windows
       _backButton.onClick.AddListener(WindowsController.Show<EntryWindow>);
       _applyButton.onClick.AddListener(OnApply);
     }
+    
+    protected override void OnShow()
+    {
+      _emailInput.text = "";
+      _passwordInput.text = "";
+      _errorMessage.text = "";
+    }
 
     private void OnApply()
     {
