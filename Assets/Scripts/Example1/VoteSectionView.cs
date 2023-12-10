@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,8 +20,13 @@ namespace igrohub.Example1
       _header.text = _name;
       _section = new VoteSection(_name, Data.Saver);
       _section.OnValueChange += OnValueChange;
-      _output.text = _section.Value.ToString();
       _voteButton.onClick.AddListener(OnVoteClick);
+    }
+
+    private async void Start()
+    {
+      await _section.LoadDataAsync();
+      _output.text = _section.Value.ToString();
     }
 
     private void OnDestroy()

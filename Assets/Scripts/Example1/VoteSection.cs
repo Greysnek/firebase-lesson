@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using UnityEngine;
 
 namespace igrohub.Example1
 {
@@ -12,7 +14,7 @@ namespace igrohub.Example1
     public int Value 
     {
       get => _value;
-      set 
+      private set 
       {
         _value = value;
         OnValueChange?.Invoke(_value);
@@ -23,11 +25,12 @@ namespace igrohub.Example1
     {
       Name = name;
       _saver = saver;
-      
-      _saver.Load(Name).ContinueWith(task => 
-      {
-        Value = task.Result.Amount;
-      });
+    }
+
+    public async Task LoadDataAsync()
+    {
+      var data = await _saver.Load(Name);
+      Value = data.Amount;
     }
 
     public void Vote(int value)
