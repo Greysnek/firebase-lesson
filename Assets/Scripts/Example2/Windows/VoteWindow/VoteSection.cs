@@ -19,8 +19,6 @@ namespace igrohub.Example2.Windows
       _voteButton.onClick.AddListener(OnButtonClick);
       _name = sectionName;
       _header.text = sectionName;
-      
-      UpdateData(false, 0);
     }
 
     public void UpdateData(bool voted, long voteCount)

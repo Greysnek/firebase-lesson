@@ -28,11 +28,11 @@ namespace igrohub.Example2.Windows
       _exit.onClick.AddListener(Exit);
       _databaseReference = FirebaseDatabase.DefaultInstance.RootReference.Root.Child("Example2").Child("Votes");
       
-      foreach (var sectionName in _sectionsNames)
+      foreach (string sectionName in _sectionsNames)
       {
         _sections[sectionName] = Instantiate(_sectionPrefab, _sectionsHolder);
         _sections[sectionName].Init(sectionName, Vote);
-        _databaseReference.Child(sectionName).ChildChanged += UpdateData;
+        _databaseReference.Child(sectionName).ChildAdded += (_, args) => UpdateData(sectionName, args.Snapshot);
       }
     }
     
@@ -54,19 +54,14 @@ namespace igrohub.Example2.Windows
         foreach (var section in _sections.Keys)
         {
           var sectionSnapShot = data.Child(section);
-          UpdateData(sectionSnapShot);
+          UpdateData(section, sectionSnapShot);
         }
       });
     }
 
-    private void UpdateData(object sender, ChildChangedEventArgs args)
+    private void UpdateData(string section, DataSnapshot snapShot)
     {
-      UpdateData(args.Snapshot);
-    }
-
-    private void UpdateData(DataSnapshot snapShot)
-    {
-      _sections[snapShot.Key].UpdateData(_voted, snapShot.ChildrenCount);
+      _sections[section].UpdateData(_voted, snapShot.ChildrenCount);
     }
 
     private static void Exit()
