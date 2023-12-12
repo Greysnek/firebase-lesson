@@ -21,8 +21,11 @@ namespace igrohub.Example1
     public async Task<VoteData> Load(string key)
     {
       var snapshot = await _reference.Root.Child(FOLDER).Child(key).GetValueAsync();
-      
-      return VoteData.FromJson(snapshot.GetRawJsonValue());
+
+      if (snapshot.Value != null)
+        return VoteData.FromJson(snapshot.GetRawJsonValue());
+        
+      return new VoteData();
     }
   }
 }
