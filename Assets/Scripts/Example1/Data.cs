@@ -2,6 +2,6 @@
 {
   public static class Data
   {
-    public static IDataSaver Saver => FirebaseDataSaver.Instance;
+    public static IDataSaver Saver => new LocalDataSaver();
   }
 }

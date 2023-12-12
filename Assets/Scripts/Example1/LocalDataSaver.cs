@@ -13,7 +13,7 @@ namespace igrohub.Example1
     public async Task<VoteData> Load(string key)
     {
       if (!PlayerPrefs.HasKey(key))
-       throw new Exception($"Invalid key: '{key}'");
+        return new VoteData();
 
       await Task.CompletedTask;
       return VoteData.FromJson(PlayerPrefs.GetString(key));

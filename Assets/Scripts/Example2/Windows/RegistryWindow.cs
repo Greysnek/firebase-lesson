@@ -1,6 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Firebase.Auth;
-using Firebase.Extensions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -41,7 +39,7 @@ namespace igrohub.Example2.Windows
         return;
 
       _activeTask = RegistryNewUser();
-      _activeTask.ContinueWithOnMainThread(task => 
+      _activeTask.ContinueWith(task => 
       {
         if (task.IsCanceled)
         {
@@ -63,14 +61,7 @@ namespace igrohub.Example2.Windows
 
     private async Task RegistryNewUser()
     {
-      await FirebaseAuth.DefaultInstance.CreateUserWithEmailAndPasswordAsync(_emailInput.text, _passwordInput.text);
-
-      var userData = new UserProfile
-      {
-        DisplayName = _nameInput.text
-      };
-      
-      await FirebaseAuth.DefaultInstance.CurrentUser.UpdateUserProfileAsync(userData);
+      await Authentification.RegisterUser(_emailInput.text, _passwordInput.text, _nameInput.text);
     }
   }
 }

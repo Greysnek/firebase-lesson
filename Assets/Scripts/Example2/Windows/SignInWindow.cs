@@ -1,6 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Firebase.Auth;
-using Firebase.Extensions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -38,7 +36,7 @@ namespace igrohub.Example2.Windows
         return;
       
       _activeTask = SignIn();
-      _activeTask.ContinueWithOnMainThread(
+      _activeTask.ContinueWith(
       task => 
       {
         if (task.IsCanceled) {
@@ -57,7 +55,7 @@ namespace igrohub.Example2.Windows
 
     private async Task SignIn()
     {
-      await FirebaseAuth.DefaultInstance.SignInWithEmailAndPasswordAsync(_emailInput.text, _passwordInput.text);
+      await Authentification.SignIn(_emailInput.text, _passwordInput.text);
     }
   }
 }

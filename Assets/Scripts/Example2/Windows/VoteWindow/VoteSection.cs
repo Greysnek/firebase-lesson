@@ -1,7 +1,4 @@
 ﻿using System;
-using Firebase.Auth;
-using Firebase.Database;
-using Firebase.Extensions;
 namespace igrohub.Example2.Windows
 {
   public class VoteSection
@@ -40,8 +37,7 @@ namespace igrohub.Example2.Windows
 
     private void OnVote()
     {
-      var user = FirebaseAuth.DefaultInstance.CurrentUser;
-      _databaseReference.Child(user.UserId).SetValueAsync("");
+      _databaseReference.Child(Authentification.UserId).SetValueAsync("");
       Vote?.Invoke();
     }
   }

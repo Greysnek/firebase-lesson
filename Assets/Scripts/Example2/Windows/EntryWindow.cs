@@ -1,5 +1,4 @@
-﻿using Firebase.Auth;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace igrohub.Example2.Windows
@@ -17,7 +16,7 @@ namespace igrohub.Example2.Windows
 
     protected override void OnShow()
     {
-      if(FirebaseAuth.DefaultInstance.CurrentUser != null)
+      if(Authentification.UserEntered)
         WindowsController.Show<VoteWindow>();
     }
   }
